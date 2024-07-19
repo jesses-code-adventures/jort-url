@@ -2,9 +2,12 @@ package server
 
 import (
 	"encoding/json"
+	"errors"
 	"fmt"
 	"net/http"
 	"strconv"
+
+	"github.com/jesses-code-adventures/jort-url/database"
 )
 
 func (s *Server) parseUsernameAndPassword(r *http.Request) (string, string, error) {
@@ -44,16 +47,28 @@ func (s *Server) withMiddleware(handler http.Handler, middleware func(http.Handl
 	return middleware(handler)
 }
 
+func (s *Server) userIsAuthenticated(r *http.Request) error {
+	userId, token, err := s.parseUserDetailsFromCookie(r)
+	if err != nil {
+		return err
+	}
+	err = s.Db.Authenticate(userId, token)
+	if err != nil {
+		return err
+	}
+	fmt.Println("user is authenticated")
+	return nil
+}
+
 func (s *Server) authenticated(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		userId, token, err := s.parseUserDetailsFromCookie(r)
-		if err != nil {
-			http.Error(w, err.Error(), http.StatusUnauthorized)
+		err := s.userIsAuthenticated(r)
+		if errors.As(err, &database.InvalidCredentialsError{}) {
+			http.Error(w, "Unauthorized", http.StatusUnauthorized)
 			return
 		}
-		err = s.Db.Authenticate(userId, token)
 		if err != nil {
-			http.Error(w, err.Error(), http.StatusUnauthorized)
+			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		}
 		next.ServeHTTP(w, r)
