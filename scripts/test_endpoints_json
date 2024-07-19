@@ -16,5 +16,7 @@ echo "logged user in with id $user_id and token $token"
 echo "shortening url $test_url"
 shortened_url=$(./scripts/shorten_test_url $token $user_id $test_url)
 echo "shorten url response: $shortened_url"
+redirect_location=$(./scripts/get_redirect_url $shortened_url)
+echo "redirect location from short url: $redirect_location"
 logout_result=$(./scripts/logout_test_user $token $user_id)
 echo "logout response: $logout_result"

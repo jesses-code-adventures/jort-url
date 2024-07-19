@@ -52,9 +52,9 @@ func (db *Database) GetExistingShortenedPath(userId int, url string) (*string, e
 }
 
 // returns nil with nil error if the url is not found
-func (db *Database) GetUrl(userId int, shortenedPath string) (*string, error) {
+func (db *Database) GetUrl(shortenedPath string) (*string, error) {
 	var url string
-	err := db.QueryRow(`SELECT url FROM url WHERE user_id = ? AND shortened_path = ?`, userId, shortenedPath).Scan(&url)
+	err := db.QueryRow(`SELECT url FROM url WHERE shortened_path = ?`, shortenedPath).Scan(&url)
 	if err == sql.ErrNoRows {
 		return nil, nil
 	}
