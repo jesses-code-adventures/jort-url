@@ -17,3 +17,7 @@ please note running tests with -v may show identical output on randomized functi
 ```bash
 go clean -testcache
 ```
+
+## limitations
+
+- designed as a demo to be run locally at this point. a live production version would likely move over to postgres rather than using sqlite.
