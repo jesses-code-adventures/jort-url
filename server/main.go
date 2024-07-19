@@ -22,6 +22,7 @@ func NewServer() (*Server, error) {
 
 func (s *Server) registerRoutes() {
 	s.Mux.HandleFunc("/user", s.userHandler)
+	s.Mux.HandleFunc("/login", s.loginHandler)
 }
 
 func (s *Server) Close() error {

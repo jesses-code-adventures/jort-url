@@ -2,3 +2,5 @@
 
 ./scripts/create_test_user
 ./scripts/create_test_user_form
+./scripts/login_test_user
+./scripts/login_test_user_form

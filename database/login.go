@@ -1,7 +1,9 @@
 package database
 
 import (
+	"fmt"
 	"github.com/golang-jwt/jwt/v5"
+	"time"
 )
 
 type IncorrectPasswordError struct{}
@@ -10,9 +12,9 @@ func (e IncorrectPasswordError) Error() string {
 	return "incorrect password"
 }
 
-func createJwtToken() (string, error) {
+func createJwtToken(username string, timestamp time.Time) (string, error) {
 	token := jwt.New(jwt.SigningMethodHS256)
-	return token.SignedString([]byte("secret"))
+	return token.SignedString([]byte(fmt.Sprintf("%s-%d", username, timestamp.UnixNano())))
 }
 
 func (db *Database) setUserSessionJwt(username string, jwt string) error {
@@ -36,7 +38,7 @@ func (db *Database) Login(username, password string) (string, error) {
 	if !verified {
 		return "", IncorrectPasswordError{}
 	}
-	jwt, err := createJwtToken()
+	jwt, err := createJwtToken(username, time.Now())
 	if err != nil {
 		return "", err
 	}
