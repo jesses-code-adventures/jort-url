@@ -25,6 +25,7 @@ func (s *Server) registerRoutes() {
 	s.Mux.HandleFunc("/user", s.userHandler)
 	s.Mux.HandleFunc("/login", s.loginHandler)
 	s.Mux.Handle("/logout", s.withMiddleware(http.HandlerFunc(s.logoutHandler), s.authenticated))
+	s.Mux.Handle("/url", s.withMiddleware(http.HandlerFunc(s.urlHandler), s.authenticated))
 }
 
 func (s *Server) Close() error {

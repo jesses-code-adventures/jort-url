@@ -63,7 +63,7 @@ func (db *Database) createTables() error {
 		created_at TEXT NOT NULL,
 		user_id INT NOT NULL,
 		url TEXT NOT NULL,
-		short_pathname TEXT NOT NULL,
+		shortened_path TEXT NOT NULL,
 		clicks INT NOT NULL DEFAULT 0,
 		FOREIGN KEY (user_id) REFERENCES user(id),
 		UNIQUE(url, user_id)

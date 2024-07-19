@@ -1,7 +1,20 @@
 #!/bin/bash
 
-./scripts/create_test_user
-creds=$(./scripts/login_test_user)
+user="jesse"
+password="jesseiscool"
+test_url="https://www.google.com"
+test_user=$(./scripts/create_test_user $user $password)
+echo "create user result: $test_user"
+creds=$(./scripts/login_test_user $user $password)
 token=$(echo $creds | jq -r '.token')
 user_id=$(echo $creds | jq -r '.user_id')
-./scripts/logout_test_user $token $user_id
+if [ -z "$token" ] || [ -z "$user_id" ]; then
+    echo "failed to log in user, exiting endpoint tests"
+    exit 1
+fi
+echo "logged user in with id $user_id and token $token"
+echo "shortening url $test_url"
+shortened_url=$(./scripts/shorten_test_url $token $user_id $test_url)
+echo "shorten url response: $shortened_url"
+logout_result=$(./scripts/logout_test_user $token $user_id)
+echo "logout response: $logout_result"

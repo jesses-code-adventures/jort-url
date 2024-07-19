@@ -64,8 +64,18 @@ func (db *Database) GetUrl(userId int, shortenedPath string) (*string, error) {
 	return &url, nil
 }
 
+func (db *Database) ShortPathHasBeenUsed(shortenedPath string) (bool, error) {
+	var count int
+	err := db.QueryRow(`SELECT COUNT(*) FROM url WHERE shortened_path = ?`, shortenedPath).Scan(&count)
+	if err != nil {
+		return false, err
+	}
+	return count > 0, nil
+}
+
 func (db *Database) CreateUrl(userId int, url string, shortenedPath string) error {
-	_, err := db.Exec(`INSERT INTO url (user_id, url, shortened_path) VALUES (?, ?, ?)`, userId, url, shortenedPath)
+	ctime := time.Now()
+	_, err := db.Exec(`INSERT INTO url (user_id, created_at, url, shortened_path) VALUES (?, ?, ?, ?)`, userId, ctime, url, shortenedPath)
 	if err != nil {
 		return err
 	}

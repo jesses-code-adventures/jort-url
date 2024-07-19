@@ -1,6 +1,14 @@
 #!/bin/bash
 
-curl -X POST -H "Content-Type: application/json" -d '{
-    "username": "jesse",
-    "password": "jesseiscool"
-}' http://localhost:8080/user
+if [ "$#" -ne 2 ]; then
+  echo "Usage: $0 <user> <password>"
+  exit 1
+fi
+
+user="$1"
+password="$2"
+
+curl -s -S -X POST -H "Content-Type: application/json" -d "{
+    \"username\": \"$user\",
+    \"password\": \"$password\"
+}" http://localhost:8080/user
