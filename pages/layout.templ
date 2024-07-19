@@ -1,0 +1,81 @@
+package pages
+
+templ Layout(page string) {
+	@Globals(NewGlobalsArgs(page))
+	<script type="text/javascript">
+        function getCookie(cname) {
+          let name = cname + "=";
+          let decodedCookie = decodeURIComponent(document.cookie);
+          let ca = decodedCookie.split(';');
+          for(let i = 0; i <ca.length; i++) {
+            let c = ca[i];
+            while (c.charAt(0) == ' ') {
+              c = c.substring(1);
+            }
+            if (c.indexOf(name) == 0) {
+              return c.substring(name.length, c.length);
+            }
+          }
+          return "";
+        }
+        let loggedIn = getCookie("jort_user_id") !== "";
+        document.addEventListener("DOMContentLoaded", function() {
+            const hamburger = document.getElementById("hamburger");
+            if (hamburger === null) {
+                throw new Error("Hamburger not found");
+            }
+            hamburger.addEventListener("click", function() {
+                const dropdownMenu = document.getElementById("dropdownContainer");
+                if (dropdownMenu === null) {
+                    throw new Error("Dropdown menu not found");
+                }
+                dropdownMenu.classList.toggle("hidden");
+            });
+            setShowHamburger();
+        })
+        document.addEventListener("reload", function() {
+            setShowHamburger();
+        })
+        function setShowHamburger() {
+            console.log('setShowHamburger');
+            if (loggedIn) {
+                console.log("logged in");
+                document.getElementById("hamburger").hidden = false;
+                return
+            } else {
+                console.log("not logged in");
+                document.getElementById("hamburger").hidden = true;
+                return
+            }
+        }
+        function toggleDarkMode() {
+            document.body.classList.toggle("dark");
+            const dropdownMenu = document.getElementById("dropdownContainer");
+            if (dropdownMenu === null) {
+                throw new Error("Dropdown menu not found");
+            }
+            if (!dropdownMenu.classList.contains("hidden")) {
+                dropdownMenu.classList.toggle("hidden");
+            }
+        }
+        function handleLogout() {
+            fetch("/logout", {
+                method: "POST",
+            }).then((response) => {
+                if (response.ok) {
+                    window.location.href = "/login";
+                }
+            });
+        }
+    </script>
+	<div id="headerContainer" class="relative flex h-12 justify-end">
+		<img id="hamburger" src="/static/hamburger.svg" class="pr-12 hover:cursor-pointer" />
+		<div id="dropdownContainer" class="absolute top-full hidden pr-12">
+			<div id="dropdownMenu" class="flex w-32 flex-col rounded-md border-2 border-black">
+				<button onclick="toggleDarkMode()" class="px-4 py-1 hover:bg-black hover:text-white">Dark Mode</button>
+				<button onclick="handleLogout()" class="px-4 py-1 hover:bg-black hover:text-white">Logout</button>
+			</div>
+		</div>
+	</div>
+	{ children... }
+}

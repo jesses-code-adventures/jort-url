@@ -1,0 +1,16 @@
+package pages
+
+templ Home() {
+	@Layout("home - jort url")
+	<div id="homeContainerContainer" class="flex justify-center">
+		<div id="homeContainer" class="flex flex-col rounded-md lg:w-3/5 lg:border-2 lg:border-black">
+			<form id="shortenerForm" action="/url" method="post">
+				<div id="usernameInputContainer" class="flex flex-col">
+					<label for="url">url</label>
+					<input type="text" name="url" id="url" class="rounded-md border-2 p-1" required/>
+				</div>
+				<button type="submit" id="submitButton" class="rounded-md bg-blue-500 p-1 text-white">Shorten</button>
+			</form>
+		</div>
+	</div>
+}

@@ -1,0 +1,25 @@
+package pages
+
+type GlobalsArgs struct {
+    Title string
+}
+
+func NewGlobalsArgs(title string) GlobalsArgs {
+    return GlobalsArgs{
+        Title: title,
+    }
+}
+
+templ Globals(opts GlobalsArgs) {
+    <!DOCTYPE html>
+    <html lang="en">
+    <head>
+        <title>{opts.Title}</title>
+        <link href="/static/output.css" rel="stylesheet"/>
+    </head>
+    <body class="h-screen overflow-y-scroll w-full text-center">
+        { children... }
+    </body>
+    </html>
+}
+

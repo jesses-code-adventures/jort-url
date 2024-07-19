@@ -22,6 +22,10 @@ func NewServer() (*Server, error) {
 
 // registerRoutes registers the server routes with optional middleware.
 func (s *Server) registerRoutes() {
+	staticDir := http.Dir("static")
+	fileServer := http.FileServer(staticDir)
+	s.Mux.Handle("/static/", http.StripPrefix("/static/", fileServer))
+	s.Mux.HandleFunc("/", s.rootHandler)
 	s.Mux.HandleFunc("/user", s.userHandler)
 	s.Mux.HandleFunc("/login", s.loginHandler)
 	s.Mux.Handle("/logout", s.withMiddleware(http.HandlerFunc(s.logoutHandler), s.authenticated))

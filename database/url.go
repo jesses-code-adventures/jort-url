@@ -33,8 +33,8 @@ func (db *Database) GetUrls(userId int) ([]UrlData, error) {
 	return urls, nil
 }
 
-func (db *Database) IncrementUrlClicks(userId int, shortenedPath string) error {
-	_, err := db.Exec(`UPDATE url SET clicks = clicks + 1 WHERE user_id = ? AND shortened_path = ?`, userId, shortenedPath)
+func (db *Database) IncrementUrlClicks(shortenedPath string) error {
+	_, err := db.Exec(`UPDATE url SET clicks = clicks + 1 WHERE shortened_path = ?`, shortenedPath)
 	return err
 }
 

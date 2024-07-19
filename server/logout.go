@@ -15,9 +15,9 @@ func (s *Server) logout(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
-	w.WriteHeader(http.StatusCreated)
 	http.SetCookie(w, &http.Cookie{Name: "jort_user_id", MaxAge: -1, Value: ""})
 	http.SetCookie(w, &http.Cookie{Name: "jort_url_token", MaxAge: -1, Value: ""})
+	w.WriteHeader(http.StatusCreated)
 	w.Write([]byte(`{"logged_out": "success"}`))
 }
 

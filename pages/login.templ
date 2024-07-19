@@ -1,0 +1,90 @@
+package pages
+
+templ Login() {
+	<script type="text/javascript">
+            let loginMode = false;
+            function setLoginMode() {
+                loginMode = true;
+		updateButtonText();
+		updateFormAction();
+            }
+            function setSignUpMode() {
+                loginMode = false;
+		updateButtonText();
+		updateFormAction();
+            }
+	    function getButtonText() {
+		if (loginMode) {
+		    return "Login";
+		} else {
+		    return "Sign Up";
+		}
+	    }
+	    function updateButtonText() {
+                document.getElementById("submitButton").innerText = getButtonText();
+            }
+	    function updateFormAction() {
+                const form = document.getElementById("authForm");
+                if (loginMode) {
+                    form.action = "/login";
+                } else {
+                    form.action = "/user";
+                }
+            }
+	    function handleFormSubmit(event) {
+                event.preventDefault();
+                const form = event.target;
+                const formData = new FormData(form);
+                const action = form.action;
+                const errorContainer = document.getElementById("errorContainer");
+                fetch(action, {
+                    method: "POST",
+                    body: formData,
+                })
+                .then(response => {
+                    if (!response.ok) {
+                        return response.text().then(text => { throw new Error(text); });
+                    }
+                    return response.text();
+                })
+                .then(data => {
+                    // handle successful response
+                    console.log("Success:", data);
+		    window.location.href = "/";
+                })
+                .catch(error => {
+                    // display the error message
+		    if (errorContainer === null) {
+			console.error(error);
+			return;
+		    }
+                    errorContainer.innerText = error.message;
+                    errorContainer.style.display = "block";
+                });
+            }
+            document.addEventListener("DOMContentLoaded", function() {
+                updateButtonText();
+		document.getElementById("authForm").addEventListener("submit", handleFormSubmit);
+            });
+        </script>
+	@Layout("login - jort url")
+	<div id="loginContainerContainer" class="flex justify-center">
+		<div id="loginContainer" class="flex flex-col rounded-md lg:w-3/5 lg:border-2 lg:border-black">
+			<div id="loginOrSignUpSelectorContainer" class="flex justify-evenly border-b-2 border-b-black">
+				<button id="signUpSelector" onclick="setSignUpMode()" class="border-r-2 bg-gray-200 p-2 text-center text-xl">Sign Up</button>
+				<button id="loginSelector" onclick="setLoginMode()" class="bg-gray-200 p-2 text-center text-xl">Log In</button>
+			</div>
+			<form id="authForm" action="/user" method="post">
+				<div id="usernameInputContainer" class="flex flex-col">
+					<label for="username">username</label>
+					<input type="text" name="username" id="username" class="rounded-md border-2 p-1" required/>
+				</div>
+				<div id="passwordInputContainer" class="flex flex-col">
+					<label for="password">password</label>
+					<input type="password" name="password" id="password" class="rounded-md border-2 p-1" required/>
+				</div>
+				<button type="submit" id="submitButton" class="rounded-md bg-blue-500 p-1 text-white">Loading...</button>
+			</form>
+		</div>
+	</div>
+}
