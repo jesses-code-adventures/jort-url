@@ -1,13 +1,18 @@
 package main
 
 import (
-	"github.com/jesses-code-adventures/jort-url/database"
+	"github.com/jesses-code-adventures/jort-url/server"
+	"net/http"
 )
 
 func main() {
-	db, err := database.NewDatabase()
+	server, err := server.NewServer()
 	if err != nil {
 		panic(err)
 	}
-	defer db.Close()
+	defer server.Close()
+	err = http.ListenAndServe(":8080", server.Mux)
+	if err != nil {
+		panic(err)
+	}
 }

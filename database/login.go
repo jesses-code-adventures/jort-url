@@ -15,7 +15,7 @@ func createJwtToken() (string, error) {
 	return token.SignedString([]byte("secret"))
 }
 
-func (db *Database) setUserSessionJwt(username []byte, jwt string) error {
+func (db *Database) setUserSessionJwt(username string, jwt string) error {
 	_, err := db.Exec(`UPDATE user SET session_jwt = ? WHERE username = ?`, jwt, username)
 	return err
 }
@@ -23,13 +23,13 @@ func (db *Database) setUserSessionJwt(username []byte, jwt string) error {
 // returns a jwt that should be set as a cookie on success
 // can throw an IncorrectPasswordError on password mismatches
 // all other errors are genuine errors
-func (db *Database) Login(username, password []byte) (string, error) {
+func (db *Database) Login(username, password string) (string, error) {
 	var encodedPassword []byte
 	err := db.QueryRow(`SELECT password FROM user WHERE username = ?`, username).Scan(&encodedPassword)
 	if err != nil {
 		return "", err
 	}
-	verified, err := db.PasswordHandler.Verify(password, encodedPassword)
+	verified, err := db.PasswordHandler.Verify([]byte(password), encodedPassword)
 	if err != nil {
 		return "", err
 	}

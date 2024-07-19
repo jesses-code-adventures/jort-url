@@ -15,7 +15,7 @@ type UrlData struct {
 }
 
 func (db *Database) GetUrls(userId int) ([]UrlData, error) {
-	rows, err := db.Query(`SELECT id, created_at, url, shortened_path, clicks FROM url WHERE user_id = ?`, userId)
+	rows, err := db.Query(`SELECT id, created_at, url, shortened_path, clicks FROM url WHERE user_id = ? ORDER BY created_at desc`, userId)
 	if err != nil {
 		return nil, err
 	}
