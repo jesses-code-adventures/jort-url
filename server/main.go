@@ -20,9 +20,11 @@ func NewServer() (*Server, error) {
 	return &server, nil
 }
 
+// registerRoutes registers the server routes with optional middleware.
 func (s *Server) registerRoutes() {
 	s.Mux.HandleFunc("/user", s.userHandler)
 	s.Mux.HandleFunc("/login", s.loginHandler)
+	s.Mux.Handle("/logout", s.withMiddleware(http.HandlerFunc(s.logoutHandler), s.authenticated))
 }
 
 func (s *Server) Close() error {

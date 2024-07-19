@@ -1,26 +1,8 @@
 package server
 
 import (
-	"encoding/json"
 	"net/http"
 )
-
-func (s *Server) parseUsernameAndPassword(r *http.Request) (string, string, error) {
-	var req struct {
-		Username string `json:"username"`
-		Password string `json:"password"`
-	}
-	if r.Header.Get("Content-Type") == "application/json" {
-		err := json.NewDecoder(r.Body).Decode(&req)
-		if err != nil {
-			return "", "", err
-		}
-	} else {
-		req.Username = r.FormValue("username")
-		req.Password = r.FormValue("password")
-	}
-	return req.Username, req.Password, nil
-}
 
 func (s *Server) createUser(w http.ResponseWriter, r *http.Request) {
 	username, password, err := s.parseUsernameAndPassword(r)

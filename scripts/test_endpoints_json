@@ -1,0 +1,7 @@
+#!/bin/bash
+
+./scripts/create_test_user
+creds=$(./scripts/login_test_user)
+token=$(echo $creds | jq -r '.token')
+user_id=$(echo $creds | jq -r '.user_id')
+./scripts/logout_test_user $token $user_id

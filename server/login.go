@@ -15,14 +15,15 @@ func (s *Server) login(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Username and password required", http.StatusBadRequest)
 		return
 	}
-	token, err := s.Db.Login(username, password)
+	userId, token, err := s.Db.Login(username, password)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
 	w.WriteHeader(http.StatusCreated)
 	http.SetCookie(w, &http.Cookie{Name: "jort_url_token", Value: token})
-	w.Write([]byte(fmt.Sprintf(`{"token": "%s"}`, token)))
+	http.SetCookie(w, &http.Cookie{Name: "jort_user_id", Value: fmt.Sprint(userId)})
+	w.Write([]byte(fmt.Sprintf(`{"token": "%s", "user_id": %d}`, token, userId)))
 }
 
 func (s *Server) loginHandler(w http.ResponseWriter, r *http.Request) {
