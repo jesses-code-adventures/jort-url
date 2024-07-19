@@ -2,11 +2,13 @@ package database
 
 import (
 	"database/sql"
+	"github.com/jesses-code-adventures/jort-url/passwords"
 	_ "github.com/mattn/go-sqlite3"
 )
 
 type Database struct {
 	*sql.DB
+	*passwords.PasswordHandler
 }
 
 func NewDatabase() (*Database, error) {
@@ -14,12 +16,13 @@ func NewDatabase() (*Database, error) {
 	if err != nil {
 		return nil, err
 	}
-	database := Database{db}
+	encoder := passwords.NewPasswordHandler()
+	database := Database{db, encoder}
 	err = database.init()
 	if err != nil {
 		return nil, err
 	}
-	return &Database{db}, nil
+	return &database, nil
 }
 
 func (db *Database) Close() error {
@@ -49,7 +52,8 @@ func (db *Database) createTables() error {
 	_, err := db.Exec(`CREATE TABLE IF NOT EXISTS user (
 		id INTEGER PRIMARY KEY AUTOINCREMENT,
 		username TEXT NOT NULL,
-		password TEXT NOT NULL
+		password TEXT NOT NULL,
+		session_jwt TEXT
 	) STRICT`)
 	if err != nil {
 		return err

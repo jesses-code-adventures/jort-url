@@ -1,31 +1,29 @@
 package passwords
 
 import (
-	"fmt"
 	"github.com/matthewhartstonge/argon2"
 	"log/slog"
 )
 
-type PasswordEncoder struct {
+type PasswordHandler struct {
 	argon argon2.Config
 }
 
-func NewPasswordEncoder() *PasswordEncoder {
+func NewPasswordHandler() *PasswordHandler {
 	config := argon2.DefaultConfig()
-	return &PasswordEncoder{config}
+	return &PasswordHandler{config}
 }
 
-func (p *PasswordEncoder) EncodePassword(password string) ([]byte, error) {
-	encoded, err := p.argon.HashEncoded([]byte(password))
+func (p *PasswordHandler) Hash(password []byte) ([]byte, error) {
+	encoded, err := p.argon.HashEncoded(password)
 	if err != nil {
 		return nil, err
 	}
-	fmt.Println(string(encoded))
 	return encoded, nil
 }
 
-func (p *PasswordEncoder) VerifyPassword(password string, existing_encoded []byte) (bool, error) {
-	ok, err := argon2.VerifyEncoded([]byte(password), existing_encoded)
+func (p *PasswordHandler) Verify(password []byte, existing_encoded []byte) (bool, error) {
+	ok, err := argon2.VerifyEncoded(password, existing_encoded)
 	if err != nil {
 		slog.Error("error verifying password")
 		return false, err

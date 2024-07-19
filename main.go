@@ -5,8 +5,9 @@ import (
 )
 
 func main() {
-	_, err := database.NewDatabase()
+	db, err := database.NewDatabase()
 	if err != nil {
 		panic(err)
 	}
+	defer db.Close()
 }

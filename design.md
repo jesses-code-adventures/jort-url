@@ -6,14 +6,15 @@ id INT PRIMARY KEY AUTO INCREMENT
 created_at DATETIME NOT NULL
 user_id INT NOT NULL
 url TEXT UNIQUE NOT NULL
-short_pathname VARCHAR(32) NOT NULL
+short_pathname TEXT NOT NULL
 clicks INT NOT NULL
 
 ## user table
 
 user_id INT PRIMARY KEY AUTO INCREMENT
-user_name VARCHAR(128)
-password TEXT
+user_name TEXT NOT NULL
+password TEXT NOT NULL
+session_jwt TEXT
 
 # ux
 
