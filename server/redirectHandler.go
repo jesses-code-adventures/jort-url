@@ -19,5 +19,10 @@ func (s *Server) redirectHandler(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Not found", http.StatusNotFound)
 		return
 	}
+	err = s.Db.IncrementUrlClicks(shortenedPath)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
 	http.Redirect(w, r, *url, http.StatusFound)
 }
