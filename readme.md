@@ -28,16 +28,20 @@ these scripts will hit each of the application's endpoints with some dummy data 
 
 if everything is all gravy, navigate to localhost:8080 on your browser and you should be good to go!
 
-## running tests
+## development
+
+to run a dev environment with hot reloading, ensure the prerequisites are installed:
 
 ```bash
-go test ./...
+npm install -D tailwindcss
+npx tailwindcss init
+go install github.com/air-verse/air@latest
 ```
 
-please note running tests with -v may show identical output on randomized functions for consecutive runs of go test. this is due to go's test caching, and the cache can be cleared.
+then to start the dev environment:
 
 ```bash
-go clean -testcache
+air main.go
 ```
 
 ## limitations
