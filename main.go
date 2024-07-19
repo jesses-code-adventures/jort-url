@@ -1,6 +1,7 @@
 package main
 
 import (
+	_ "github.com/a-h/templ"
 	"github.com/jesses-code-adventures/jort-url/server"
 	"net/http"
 )
