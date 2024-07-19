@@ -1,11 +1,11 @@
 package main
 
 import (
-	"github.com/joho/godotenv"
+	"github.com/jesses-code-adventures/jort-url/database"
 )
 
 func main() {
-	err := godotenv.Load()
+	_, err := database.NewDatabase()
 	if err != nil {
 		panic(err)
 	}

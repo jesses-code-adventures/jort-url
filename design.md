@@ -5,8 +5,8 @@
 id INT PRIMARY KEY AUTO INCREMENT
 created_at DATETIME NOT NULL
 user_id INT NOT NULL
-url_long TEXT UNIQUE NOT NULL
-url_short VARCHAR(32) NOT NULL
+url TEXT UNIQUE NOT NULL
+short_pathname VARCHAR(32) NOT NULL
 clicks INT NOT NULL
 
 ## user table
