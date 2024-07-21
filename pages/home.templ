@@ -24,14 +24,11 @@ templ Home() {
 		form.addEventListener("submit", async function(event) {
 			event.preventDefault();
 			const formData = new FormData(form);
-			const action = form.action;
-
 			try {
-				const response = await fetch(action, {
+				const response = await fetch("/url", {
 					method: "POST",
 					body: formData,
 				});
-
 				if (!response.ok) {
 					const errorText = await response.text();
 					setErrorText(errorText);
@@ -39,6 +36,7 @@ templ Home() {
 				const shortenedUrl = await response.text();
 				await navigator.clipboard.writeText(shortenedUrl);
 				await flashCopiedToClipboard();
+				htmx.trigger(document.body, "newUrl");
 			} catch (error) {
 				setErrorText("An error occurred while shortening the URL");
 			}
@@ -48,7 +46,7 @@ templ Home() {
 	<div id="homeContainerContainer" class="flex justify-center">
 		<div class="flex w-full flex-col items-center">
 			<div id="homeContainer" class="flex w-full flex-col rounded-md">
-				<form id="shortenerForm" hx-post="/url" hx-swap="none" class="flex w-full flex-col py-4">
+				<form id="shortenerForm" class="flex w-full flex-col py-4">
 					<div id="urlInputAndButton" class="flex w-full justify-center">
 						<input type="url" name="url" id="url" placeholder="enter your url..." class="w-96 rounded-md border-2 px-4 py-2 focus:outline-violet-200 dark:focus:outline-violet-800" required/>
 						<button type="submit" id="submitButton" onclick="" class="w-32 rounded-md bg-violet-500 px-4 py-2 text-white hover:bg-violet-300 dark:hover:bg-violet-700">shorten</button>

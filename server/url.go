@@ -100,7 +100,6 @@ func (s *Server) urlHandler(w http.ResponseWriter, r *http.Request) {
 	} else if r.Method == "GET" {
 		s.getUrls(w, r)
 	} else {
-		fmt.Println(r.Method)
 		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
 	}
 }
