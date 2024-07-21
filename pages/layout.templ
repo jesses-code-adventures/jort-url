@@ -68,9 +68,9 @@ templ Layout(page string) {
 		<img id="hamburger" src="/static/hamburger.svg" class="pr-12 hover:cursor-pointer text-blue-500 fill-blue-500 stroke-current"/>
 		<img id="hamburger_hidden" src="/static/hamburger_dark.svg" class="pr-12 hover:cursor-pointer text-blue-500 fill-blue-500 stroke-current hidden absolute"/>
 		<div id="dropdownContainer" class="absolute top-full hidden pr-12">
-			<div id="dropdownMenu" class="flex w-32 flex-col rounded-md border-2 border-black">
-				<button onclick="toggleDarkMode()" class="px-4 py-1 hover:bg-violet-200">Dark Mode</button>
-				<button onclick="handleLogout()" class="px-4 py-1 hover:bg-violet-200">Logout</button>
+			<div id="dropdownMenu" class="flex w-32 flex-col rounded-md border-2 border-black dark:border-white">
+				<button onclick="toggleDarkMode()" class="px-4 py-1 hover:bg-violet-200 dark:hover:bg-violet-800">Dark Mode</button>
+				<button onclick="handleLogout()" class="px-4 py-1 hover:bg-violet-200 dark:hover:bg-violet-800">Logout</button>
 			</div>
 		</div>
 	</div>
