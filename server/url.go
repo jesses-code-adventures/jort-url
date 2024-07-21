@@ -85,7 +85,6 @@ func (s *Server) getUrls(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	if r.Header.Get("Content-Type") == "text/html" {
-		fmt.Println("html")
 		w.Header().Set("Content-Type", "text/html")
 		err := pages.MyLinks(urls, r).Render(r.Context(), w)
 		if err != nil {

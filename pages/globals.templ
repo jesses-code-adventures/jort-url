@@ -1,24 +1,24 @@
 package pages
 
 type GlobalsArgs struct {
-    Title string
+	Title string
 }
 
 func NewGlobalsArgs(title string) GlobalsArgs {
-    return GlobalsArgs{
-        Title: title,
-    }
+	return GlobalsArgs{
+		Title: title,
+	}
 }
 
 templ Globals(opts GlobalsArgs) {
-    <!DOCTYPE html>
-    <html lang="en">
-    <head>
-        <title>{opts.Title}</title>
-        <script src="/static/htmx.js" />
-        <link href="/static/output.css" rel="stylesheet"/>
-    </head>
-    <script type="text/javascript">
+	<!DOCTYPE html>
+	<html lang="en">
+		<head>
+			<title>{ opts.Title }</title>
+			<script src="/static/htmx.js"></script>
+			<link href="/static/output.css" rel="stylesheet"/>
+		</head>
+		<script type="text/javascript">
         let darkMode = false;
 
         function setCookie(cname, cvalue, exdays) {
@@ -30,6 +30,7 @@ templ Globals(opts GlobalsArgs) {
 
         function applyDarkModePreference() {
           const darkModeCookie = getCookie("darkMode");
+          const hamburger = document.getElementById("hamburger");
           if (darkModeCookie) {
             document.documentElement.classList.toggle("dark", darkModeCookie === "true");
             darkMode = darkModeCookie === "true";
@@ -38,6 +39,11 @@ templ Globals(opts GlobalsArgs) {
             document.documentElement.classList.toggle("dark", prefersDarkMode);
             setCookie("darkMode", prefersDarkMode, 365);
             darkMode = prefersDarkMode;
+          }
+          if (darkMode) {
+            hamburger.src = "/static/hamburger_dark.svg";
+          } else {
+            hamburger.src = "/static/hamburger.svg";
           }
         }
 
@@ -67,9 +73,8 @@ templ Globals(opts GlobalsArgs) {
             }
         }
     </script>
-     <body class="h-screen overflow-y-scroll w-full text-center dark:bg-black dark:text-white">
-        { children... }
-    </body>
-    </html>
+		<body class="h-screen overflow-y-scroll w-full text-center dark:bg-black dark:text-white">
+			{ children... }
+		</body>
+	</html>
 }
-
