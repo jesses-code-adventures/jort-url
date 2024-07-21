@@ -1,0 +1,20 @@
+package pages
+
+import (
+	"github.com/jesses-code-adventures/jort-url/database"
+	"net/http"
+	"fmt"
+)
+
+templ MyLinks(data []database.UrlData, r *http.Request) {
+	<ul id="userUrls" class="grid grid-cols-3 px-12">
+		<h2 class="text-center border-b-2">url</h2>
+		<h2 class="text-center border-b-2">shortened</h2>
+		<h2 class="text-center border-b-2">clicks</h2>
+		for _, url := range data {
+			<a href={ templ.SafeURL(url.Url) } target="_blank" class="text-center">{ url.Url }</a>
+			<a href={ templ.SafeURL(url.Url) } target="_blank" class="text-center">{ r.Host }/{ url.ShortenedPath }</a>
+			<p class="text-center">{ fmt.Sprint(url.Clicks) }</p>
+		}
+	</ul>
+}

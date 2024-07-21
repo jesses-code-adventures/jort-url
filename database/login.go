@@ -1,6 +1,7 @@
 package database
 
 import (
+	"database/sql"
 	"fmt"
 	"github.com/golang-jwt/jwt/v5"
 	"time"
@@ -10,6 +11,12 @@ type IncorrectPasswordError struct{}
 
 func (e IncorrectPasswordError) Error() string {
 	return "incorrect password"
+}
+
+type UserNotFoundError struct{}
+
+func (e UserNotFoundError) Error() string {
+	return "user not found"
 }
 
 func createJwtToken(username string, timestamp time.Time) (string, error) {
@@ -24,11 +31,15 @@ func (db *Database) setUserSessionJwt(username string, jwt string) (int, error) 
 }
 
 // returns a jwt that should be set as a cookie on success
+// can throw a UserNotFoundError on non-existent users
 // can throw an IncorrectPasswordError on password mismatches
 // all other errors are genuine errors
 func (db *Database) Login(username, password string) (int, string, error) {
 	var encodedPassword []byte
 	err := db.QueryRow(`SELECT password FROM user WHERE username = ?`, username).Scan(&encodedPassword)
+	if err == sql.ErrNoRows {
+		return 0, "", UserNotFoundError{}
+	}
 	if err != nil {
 		return 0, "", err
 	}

@@ -23,10 +23,17 @@ func (db *Database) GetUrls(userId int) ([]UrlData, error) {
 	var urls []UrlData
 	for rows.Next() {
 		var url UrlData
-		err := rows.Scan(&url.Id, &url.CreatedAt, &url.Url, &url.ShortenedPath, &url.Clicks)
+		var timeString string
+		err := rows.Scan(&url.Id, &timeString, &url.Url, &url.ShortenedPath, &url.Clicks)
 		if err != nil {
 			return nil, err
 		}
+		layout := "2006-01-02 15:04:05.00000-07:00"
+		parsedTime, err := time.Parse(layout, timeString)
+		if err != nil {
+			return nil, err
+		}
+		url.CreatedAt = parsedTime
 		url.UserId = userId
 		urls = append(urls, url)
 	}
@@ -74,7 +81,7 @@ func (db *Database) ShortPathHasBeenUsed(shortenedPath string) (bool, error) {
 }
 
 func (db *Database) CreateUrl(userId int, url string, shortenedPath string) error {
-	ctime := time.Now()
+	ctime := time.Now().Format("2006-01-02 15:04:05.00000-07:00")
 	_, err := db.Exec(`INSERT INTO url (user_id, created_at, url, shortened_path) VALUES (?, ?, ?, ?)`, userId, ctime, url, shortenedPath)
 	if err != nil {
 		return err

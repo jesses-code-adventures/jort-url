@@ -15,9 +15,59 @@ templ Globals(opts GlobalsArgs) {
     <html lang="en">
     <head>
         <title>{opts.Title}</title>
+        <script src="/static/htmx.js" />
         <link href="/static/output.css" rel="stylesheet"/>
     </head>
-    <body class="h-screen overflow-y-scroll w-full text-center">
+    <script type="text/javascript">
+        let darkMode = false;
+
+        function setCookie(cname, cvalue, exdays) {
+          const d = new Date();
+          d.setTime(d.getTime() + (exdays * 24 * 60 * 60 * 1000));
+          let expires = "expires=" + d.toUTCString();
+          document.cookie = cname + "=" + cvalue + ";" + expires + ";path=/";
+        }
+
+        function applyDarkModePreference() {
+          const darkModeCookie = getCookie("darkMode");
+          if (darkModeCookie) {
+            document.documentElement.classList.toggle("dark", darkModeCookie === "true");
+            darkMode = darkModeCookie === "true";
+          } else {
+            const prefersDarkMode = window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches;
+            document.documentElement.classList.toggle("dark", prefersDarkMode);
+            setCookie("darkMode", prefersDarkMode, 365);
+            darkMode = prefersDarkMode;
+          }
+        }
+
+        function toggleDarkMode() {
+            const hamburger = document.getElementById("hamburger");
+            if (darkMode) {
+                setCookie("darkMode", "false", 365);
+                darkMode = false;
+                document.documentElement.classList.toggle("dark");
+                if (hamburger !== null) {
+                    hamburger.src = "/static/hamburger.svg";
+                }
+            } else {
+                setCookie("darkMode", "true", 365);
+                darkMode = true;
+                document.documentElement.classList.toggle("dark");
+                if (hamburger !== null) {
+                    hamburger.src = "/static/hamburger_dark.svg";
+                }
+            }
+            const dropdownMenu = document.getElementById("dropdownContainer");
+            if (dropdownMenu === null) {
+                throw new Error("Dropdown menu not found");
+            }
+            if (!dropdownMenu.classList.contains("hidden")) {
+                dropdownMenu.classList.toggle("hidden");
+            }
+        }
+    </script>
+     <body class="h-screen overflow-y-scroll w-full text-center dark:bg-black dark:text-white">
         { children... }
     </body>
     </html>

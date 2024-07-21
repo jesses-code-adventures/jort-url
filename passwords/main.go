@@ -2,7 +2,6 @@ package passwords
 
 import (
 	"github.com/matthewhartstonge/argon2"
-	"log/slog"
 )
 
 type PasswordHandler struct {
@@ -25,13 +24,10 @@ func (p *PasswordHandler) Hash(password []byte) ([]byte, error) {
 func (p *PasswordHandler) Verify(password []byte, existing_encoded []byte) (bool, error) {
 	ok, err := argon2.VerifyEncoded(password, existing_encoded)
 	if err != nil {
-		slog.Error("error verifying password")
 		return false, err
 	}
 	if ok {
-		slog.Info("correct password")
 		return true, nil
 	}
-	slog.Warn("incorrect password")
 	return false, nil
 }

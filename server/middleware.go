@@ -56,7 +56,6 @@ func (s *Server) userIsAuthenticated(r *http.Request) error {
 	if err != nil {
 		return err
 	}
-	fmt.Println("user is authenticated")
 	return nil
 }
 

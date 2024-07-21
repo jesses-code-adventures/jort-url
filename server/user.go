@@ -19,7 +19,7 @@ func (s *Server) createUser(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
-	w.WriteHeader(http.StatusCreated)
+	s.login(w, r)
 }
 
 func (s *Server) userHandler(w http.ResponseWriter, r *http.Request) {

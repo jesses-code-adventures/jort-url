@@ -2,15 +2,66 @@ package pages
 
 templ Home() {
 	@Layout("home - jort url")
+	<script type="text/javascript">
+	async function flashCopiedToClipboard() {
+		const submitButton = document.getElementById("submitButton");
+		submitButton.innerText = "copied!";
+		setTimeout(() => {
+			submitButton.innerText = "shorten";
+		}, 2000);
+	}
+	function setErrorText(text) {
+		const errorContainer = document.getElementById("errorContainer");
+		if (!errorContainer) {
+			console.error("Error not found container");
+			return;
+		}
+		errorContainer.innerText = text;
+		errorContainer.classList.remove("hidden");
+	}
+	document.addEventListener("DOMContentLoaded", function() {
+		const form = document.getElementById("shortenerForm");
+		form.addEventListener("submit", async function(event) {
+			event.preventDefault();
+			const formData = new FormData(form);
+			const action = form.action;
+
+			try {
+				const response = await fetch(action, {
+					method: "POST",
+					body: formData,
+				});
+
+				if (!response.ok) {
+					const errorText = await response.text();
+					setErrorText(errorText);
+				}
+				const shortenedUrl = await response.text();
+				await navigator.clipboard.writeText(shortenedUrl);
+				await flashCopiedToClipboard();
+			} catch (error) {
+				setErrorText("An error occurred while shortening the URL");
+			}
+		});
+	});
+	</script>
 	<div id="homeContainerContainer" class="flex justify-center">
-		<div id="homeContainer" class="flex flex-col rounded-md lg:w-3/5 lg:border-2 lg:border-black">
-			<form id="shortenerForm" action="/url" method="post">
-				<div id="usernameInputContainer" class="flex flex-col">
-					<label for="url">url</label>
-					<input type="text" name="url" id="url" class="rounded-md border-2 p-1" required/>
+		<div class="flex w-full flex-col items-center">
+			<div id="homeContainer" class="flex w-full flex-col rounded-md">
+				<form id="shortenerForm" hx-post="/url" hx-swap="none" class="flex w-full flex-col py-4">
+					<div id="urlInputAndButton" class="flex w-full justify-center">
+						<input type="url" name="url" id="url" placeholder="enter your url..." class="w-96 rounded-md border-2 px-4 py-2 focus:outline-violet-200 dark:focus:outline-violet-800" required/>
+						<button type="submit" id="submitButton" onclick="" class="w-32 rounded-md bg-violet-500 px-4 py-2 text-white hover:bg-violet-300 dark:hover:bg-violet-700">shorten</button>
+					</div>
+					<div id="errorContainer" class="hidden text-center text-red-500"></div>
+				</form>
+			</div>
+			<div id="linksContainer" class="flex flex-col rounded-md">
+				<h1 class="p-4 text-3xl text-violet-700 dark:text-violet-300">my links</h1>
+				<div hx-get="/url" hx-headers='{"Content-Type": "text/html"}' hx-trigger="load, newUrl from:body" hx-target="#content" class="flex flex-col">
+					<div id="content"></div>
 				</div>
-				<button type="submit" id="submitButton" class="rounded-md bg-blue-500 p-1 text-white">Shorten</button>
-			</form>
+			</div>
 		</div>
 	</div>
 }

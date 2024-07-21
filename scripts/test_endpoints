@@ -18,5 +18,7 @@ shortened_url=$(./scripts/shorten_test_url $token $user_id $test_url)
 echo "shorten url response: $shortened_url"
 redirect_location=$(./scripts/get_redirect_url $shortened_url)
 echo "redirect location from short url: $redirect_location"
+get_urls_result=$(./scripts/get_urls $token $user_id)
+echo "get urls response: $get_urls_result"
 logout_result=$(./scripts/logout_test_user $token $user_id)
 echo "logout response: $logout_result"

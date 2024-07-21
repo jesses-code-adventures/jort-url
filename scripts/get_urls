@@ -1,0 +1,16 @@
+#!/bin/bash
+
+if [ "$#" -ne 2 ]; then
+  echo "Usage: $0 <token> <user_id>"
+  exit 1
+fi
+
+token="$1"
+user_id="$2"
+
+response=$(curl -X GET -s -S -H "Content-Type: application/json" \
+  --cookie "jort_url_token=$token" \
+  --cookie "jort_user_id=$user_id" \
+  http://localhost:8080/url)
+
+echo "$response"

@@ -19,8 +19,11 @@ func (s *Server) login(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	userId, token, err := s.Db.Login(username, password)
-	if errors.As(err, &database.IncorrectPasswordError{}) {
-		http.Error(w, "Incorrect username or password", http.StatusUnauthorized)
+	if errors.As(err, &database.UserNotFoundError{}) {
+		http.Error(w, "User not found", http.StatusUnauthorized)
+		return
+	} else if errors.As(err, &database.IncorrectPasswordError{}) {
+		http.Error(w, "Incorrect password", http.StatusUnauthorized)
 		return
 	} else if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)

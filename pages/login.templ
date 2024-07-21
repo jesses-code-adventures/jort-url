@@ -3,27 +3,36 @@ package pages
 templ Login() {
 	<script type="text/javascript">
             let loginMode = false;
+
             function setLoginMode() {
                 loginMode = true;
-		updateButtonText();
-		updateFormAction();
+                setVisualStates();
             }
+
             function setSignUpMode() {
                 loginMode = false;
-		updateButtonText();
-		updateFormAction();
+                setVisualStates();
             }
-	    function getButtonText() {
-		if (loginMode) {
-		    return "Login";
-		} else {
-		    return "Sign Up";
-		}
-	    }
-	    function updateButtonText() {
+
+            function setVisualStates() {
+                updateButtonText();
+                updateFormAction();
+                updateButtonStyles();
+            }
+
+            function getButtonText() {
+                if (loginMode) {
+                    return "login";
+                } else {
+                    return "sign up";
+                }
+            }
+
+            function updateButtonText() {
                 document.getElementById("submitButton").innerText = getButtonText();
             }
-	    function updateFormAction() {
+
+            function updateFormAction() {
                 const form = document.getElementById("authForm");
                 if (loginMode) {
                     form.action = "/login";
@@ -31,12 +40,31 @@ templ Login() {
                     form.action = "/user";
                 }
             }
-	    function handleFormSubmit(event) {
+
+            function updateButtonStyles() {
+                const loginButton = document.getElementById("loginSelector");
+                const signUpButton = document.getElementById("signUpSelector");
+
+                if (loginMode) {
+                    loginButton.classList.add("bg-violet-200");
+                    loginButton.classList.add("dark:bg-violet-800");
+                    signUpButton.classList.remove("bg-violet-200");
+                    signUpButton.classList.remove("dark:bg-violet-800");
+                } else {
+                    signUpButton.classList.add("dark:bg-violet-800");
+                    signUpButton.classList.add("bg-violet-200");
+                    loginButton.classList.remove("dark:bg-violet-800");
+                    loginButton.classList.remove("bg-violet-200");
+                }
+            }
+
+            function handleFormSubmit(event) {
                 event.preventDefault();
                 const form = event.target;
                 const formData = new FormData(form);
                 const action = form.action;
                 const errorContainer = document.getElementById("errorContainer");
+
                 fetch(action, {
                     method: "POST",
                     body: formData,
@@ -48,43 +76,46 @@ templ Login() {
                     return response.text();
                 })
                 .then(data => {
-                    // handle successful response
-                    console.log("Success:", data);
-		    window.location.href = "/";
+                    window.location.href = "/";
                 })
                 .catch(error => {
-                    // display the error message
-		    if (errorContainer === null) {
-			console.error(error);
-			return;
-		    }
+                    if (errorContainer === null) {
+                        console.error(error);
+                        return;
+                    }
+                    if (errorContainer.classList.contains("hidden")) {
+                        errorContainer.classList.remove("hidden");
+                    }
                     errorContainer.innerText = error.message;
                     errorContainer.style.display = "block";
                 });
             }
+
             document.addEventListener("DOMContentLoaded", function() {
                 updateButtonText();
-		document.getElementById("authForm").addEventListener("submit", handleFormSubmit);
+                updateButtonStyles();
+                document.getElementById("authForm").addEventListener("submit", handleFormSubmit);
             });
         </script>
 	@Layout("login - jort url")
 	<div id="loginContainerContainer" class="flex justify-center">
-		<div id="loginContainer" class="flex flex-col rounded-md lg:w-3/5 lg:border-2 lg:border-black">
+		<div id="loginContainer" class="flex w-full flex-col rounded-md lg:w-3/5 lg:border-2 lg:border-black">
 			<div id="loginOrSignUpSelectorContainer" class="flex justify-evenly border-b-2 border-b-black">
-				<button id="signUpSelector" onclick="setSignUpMode()" class="border-r-2 bg-gray-200 p-2 text-center text-xl">Sign Up</button>
-				<button id="loginSelector" onclick="setLoginMode()" class="bg-gray-200 p-2 text-center text-xl">Log In</button>
+				<button id="signUpSelector" onclick="setSignUpMode()" class="w-full bg-violet-200 p-2 text-center text-xl dark:bg-violet-800">sign up</button>
+				<button id="loginSelector" onclick="setLoginMode()" class="w-full p-2 text-center text-xl">log in</button>
 			</div>
-			<form id="authForm" action="/user" method="post">
-				<div id="usernameInputContainer" class="flex flex-col">
+			<form id="authForm" action="/user" method="post" class="pt-4">
+				<div id="usernameInputContainer" class="flex flex-col items-center gap-2">
 					<label for="username">username</label>
-					<input type="text" name="username" id="username" class="rounded-md border-2 p-1" required/>
+					<input type="text" name="username" id="username" class="w-1/3 rounded-md border-2 p-1 focus:outline-violet-200 dark:focus:outline-violet-800 dark:bg-black dark:text-white" required/>
 				</div>
-				<div id="passwordInputContainer" class="flex flex-col">
+				<div id="passwordInputContainer" class="flex flex-col items-center gap-2 pb-4">
 					<label for="password">password</label>
-					<input type="password" name="password" id="password" class="rounded-md border-2 p-1" required/>
+					<input type="password" name="password" id="password" class="w-1/3 rounded-md border-2 p-1 focus:outline-violet-200 dark:focus:outline-violet-800 dark:bg-black dark:text-white" required/>
 				</div>
-				<button type="submit" id="submitButton" class="rounded-md bg-blue-500 p-1 text-white">Loading...</button>
+				<button type="submit" id="submitButton" class="w-32 rounded-md bg-violet-500 px-4 py-2 text-white hover:bg-violet-300 dark:hover:bg-violet-700">loading...</button>
 			</form>
+                        <div id="errorContainer" class="hidden text-center text-red-500"></div>
 		</div>
 	</div>
 }

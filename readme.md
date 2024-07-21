@@ -44,6 +44,12 @@ then to start the dev environment:
 air main.go
 ```
 
+currently you need to run the tailwind cli build process in a separate console (sorry i know this sucks)
+
+```bash
+npx tailwindcss -i ./input.css -o ./static/output.css --watch
+```
+
 ## limitations
 
 - designed as a demo to be run locally at this point. a live production version would likely move over to postgres rather than using sqlite.
