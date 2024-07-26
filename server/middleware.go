@@ -30,10 +30,8 @@ func (s *Server) parseUsernameAndPassword(r *http.Request) (string, string, erro
 	switch r.Header.Get("Content-Type") {
 	case "application/json":
 		return parseUsernameAndPasswordFromJson(r)
-	case "application/x-www-form-urlencoded":
-		return parseUsernameAndPasswordFromForm(r)
 	default:
-		return "", "", fmt.Errorf("Invalid content type")
+		return parseUsernameAndPasswordFromForm(r)
 	}
 }
 
