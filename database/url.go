@@ -14,6 +14,23 @@ type UrlData struct {
 	Clicks        int
 }
 
+func parseUrlRow(rows *sql.Rows, urls []UrlData, userId int) ([]UrlData, error) {
+	var url UrlData
+	var timeString string
+	err := rows.Scan(&url.Id, &timeString, &url.Url, &url.ShortenedPath, &url.Clicks)
+	if err != nil {
+		return nil, err
+	}
+	layout := "2006-01-02 15:04:05.00000-07:00"
+	parsedTime, err := time.Parse(layout, timeString)
+	if err != nil {
+		return nil, err
+	}
+	url.CreatedAt = parsedTime
+	url.UserId = userId
+	return append(urls, url), nil
+}
+
 func (db *Database) GetUrls(userId int) ([]UrlData, error) {
 	rows, err := db.Query(`SELECT id, created_at, url, shortened_path, clicks FROM url WHERE user_id = ? ORDER BY created_at desc`, userId)
 	if err != nil {
@@ -22,20 +39,10 @@ func (db *Database) GetUrls(userId int) ([]UrlData, error) {
 	defer rows.Close()
 	var urls []UrlData
 	for rows.Next() {
-		var url UrlData
-		var timeString string
-		err := rows.Scan(&url.Id, &timeString, &url.Url, &url.ShortenedPath, &url.Clicks)
+		urls, err = parseUrlRow(rows, urls, userId)
 		if err != nil {
 			return nil, err
 		}
-		layout := "2006-01-02 15:04:05.00000-07:00"
-		parsedTime, err := time.Parse(layout, timeString)
-		if err != nil {
-			return nil, err
-		}
-		url.CreatedAt = parsedTime
-		url.UserId = userId
-		urls = append(urls, url)
 	}
 	return urls, nil
 }

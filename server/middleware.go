@@ -10,21 +10,31 @@ import (
 	"github.com/jesses-code-adventures/jort-url/database"
 )
 
-func (s *Server) parseUsernameAndPassword(r *http.Request) (string, string, error) {
+func parseUsernameAndPasswordFromForm(r *http.Request) (string, string, error) {
+	return r.FormValue("username"), r.FormValue("password"), nil
+}
+
+func parseUsernameAndPasswordFromJson(r *http.Request) (string, string, error) {
 	var req struct {
 		Username string `json:"username"`
 		Password string `json:"password"`
 	}
-	if r.Header.Get("Content-Type") == "application/json" {
-		err := json.NewDecoder(r.Body).Decode(&req)
-		if err != nil {
-			return "", "", err
-		}
-	} else {
-		req.Username = r.FormValue("username")
-		req.Password = r.FormValue("password")
+	err := json.NewDecoder(r.Body).Decode(&req)
+	if err != nil {
+		return "", "", err
 	}
 	return req.Username, req.Password, nil
+}
+
+func (s *Server) parseUsernameAndPassword(r *http.Request) (string, string, error) {
+	switch r.Header.Get("Content-Type") {
+	case "application/json":
+		return parseUsernameAndPasswordFromJson(r)
+	case "application/x-www-form-urlencoded":
+		return parseUsernameAndPasswordFromForm(r)
+	default:
+		return "", "", fmt.Errorf("Invalid content type")
+	}
 }
 
 func (s *Server) parseUserDetailsFromCookie(r *http.Request) (int, string, error) {
@@ -43,10 +53,6 @@ func (s *Server) parseUserDetailsFromCookie(r *http.Request) (int, string, error
 	return userId, tokenCookie.Value, nil
 }
 
-func (s *Server) withMiddleware(handler http.Handler, middleware func(http.Handler) http.Handler) http.Handler {
-	return middleware(handler)
-}
-
 func (s *Server) userIsAuthenticated(r *http.Request) error {
 	userId, token, err := s.parseUserDetailsFromCookie(r)
 	if err != nil {
@@ -59,7 +65,7 @@ func (s *Server) userIsAuthenticated(r *http.Request) error {
 	return nil
 }
 
-func (s *Server) authenticated(next http.Handler) http.Handler {
+func (s *Server) authenticated(next http.HandlerFunc) http.HandlerFunc {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		err := s.userIsAuthenticated(r)
 		if errors.As(err, &database.InvalidCredentialsError{}) {

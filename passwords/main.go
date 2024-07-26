@@ -26,8 +26,8 @@ func (p *PasswordHandler) Verify(password []byte, existing_encoded []byte) (bool
 	if err != nil {
 		return false, err
 	}
-	if ok {
-		return true, nil
+	if !ok {
+		return false, nil
 	}
-	return false, nil
+	return true, nil
 }

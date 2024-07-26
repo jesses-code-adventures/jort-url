@@ -20,6 +20,11 @@ func NewServer() (*Server, error) {
 	return &server, nil
 }
 
+// Get the static routes that the server serves.
+func (s *Server) routes() []string {
+	return []string{"static", "user", "login", "logout", "url"}
+}
+
 // registerRoutes registers the server routes with optional middleware.
 func (s *Server) registerRoutes() {
 	staticDir := http.Dir("static")
@@ -28,8 +33,8 @@ func (s *Server) registerRoutes() {
 	s.Mux.HandleFunc("/", s.rootHandler)
 	s.Mux.HandleFunc("/user", s.userHandler)
 	s.Mux.HandleFunc("/login", s.loginHandler)
-	s.Mux.Handle("/logout", s.withMiddleware(http.HandlerFunc(s.logoutHandler), s.authenticated))
-	s.Mux.Handle("/url", s.withMiddleware(http.HandlerFunc(s.urlHandler), s.authenticated))
+	s.Mux.HandleFunc("/logout", s.authenticated(s.logoutHandler))
+	s.Mux.HandleFunc("/url", s.authenticated(s.urlHandler))
 	s.Mux.HandleFunc("/{shortenedPath}", s.redirectHandler)
 }
 

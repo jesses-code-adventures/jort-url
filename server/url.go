@@ -46,7 +46,7 @@ func (s *Server) shortenUrl(w http.ResponseWriter, r *http.Request) {
 	} else {
 		newExists := true
 		for newExists {
-			shortUrl = urls.GetRandomPath()
+			shortUrl = urls.GetRandomPath(s.routes())
 			newExists, err = s.Db.ShortPathHasBeenUsed(shortUrl)
 			if err != nil {
 				http.Error(w, err.Error(), http.StatusInternalServerError)
